@@ -1,0 +1,6 @@
+{
+  "NODE_ENV": "production",
+  "MONGODB_URI": "mongodb+srv://Jitesh:Sk5FGQQaVar0I0TC@cluster0.k6emj7i.mongodb.net",
+  "JWT_KEY": "your_very_secret_jwt_key",
+  "EXPRESS_SESSION_KEY": "your_secret_session_key"
+}
