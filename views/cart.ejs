@@ -1,0 +1,46 @@
+<%- include('./partials/header') %>
+
+<div class="w-full px-10 py-16 flex flex-wrap gap-8 justify-center">
+  <% if (user.cart.length === 0) { %>
+    <h2 class="text-2xl font-semibold">Your cart is empty!</h2>
+  <% } else { %>
+    <% user.cart.forEach((item) => { %>
+      <div class="w-80 bg-white shadow-lg rounded-xl overflow-hidden flex flex-col">
+        <div class="h-52 flex items-center justify-center bg-[<%= item.product.bgcolor || '#f0f0f0' %>]">
+          <img
+            class="h-40 object-contain"
+            src="data:image/jpeg;base64,<%= item.product.image.toString('base64') %>"
+            alt=""
+          />
+        </div>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold mb-2"><%= item.product.name %></h3>
+          <div class="flex items-center justify-between mb-3">
+            <a href="/increaseqty/<%= item.product._id %>" class="w-8 h-8 bg-gray-200 hover:bg-gray-300 flex items-center justify-center rounded-full">+</a>
+            <span class="px-3 py-1 bg-gray-100 rounded text-gray-700"><%= item.quantity %></span>
+            <a href="/decreaseqty/<%= item.product._id %>" class="w-8 h-8 bg-gray-200 hover:bg-gray-300 flex items-center justify-center rounded-full">–</a>
+          </div>
+          <div class="border-t pt-3 text-sm text-gray-600">
+            <p>Total MRP: ₹ <%= item.product.price * item.quantity %></p>
+            <p>Discount: ₹ <%= item.product.discount * item.quantity %></p>
+            <p>Platform Fee: ₹ <%= 20 * item.quantity %></p>
+            <p>Shipping Fee: FREE</p>
+          </div>
+          <div class="border-t mt-3 pt-3 flex justify-between font-semibold text-base">
+            <span>Total</span>
+            <span>₹ <%= ((Number(item.product.price) + 20) - Number(item.product.discount)) * item.quantity %></span>
+          </div>
+          <div class="mt-3 flex justify-end">
+            <a href="/removefromcart/<%= item.product._id %>" class="text-red-500 hover:underline text-sm">Remove</a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+
+    <div class="w-full mt-10 flex justify-end">
+      <h3 class="font-bold text-xl text-green-600">Grand Total: ₹ <%= bill %></h3>
+    </div>
+  <% } %>
+</div>
+
+<%- include('./partials/footer') %>

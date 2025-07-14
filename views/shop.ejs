@@ -1,0 +1,108 @@
+<%- include('./partials/header') %>
+
+<% if (error && error.length > 0) { %>
+  <div id="flash-msg" class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-red-500 text-white rounded shadow-lg transition-opacity duration-500 z-50">
+    <%= error[0] %>
+  </div>
+<% } %>
+<% if (success && success.length > 0) { %>
+  <div id="flash-msg" class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-green-500 text-white rounded shadow-lg transition-opacity duration-500 z-50">
+    <%= success[0] %>
+  </div>
+<% } %>
+
+<%
+  let safeActiveCategory = (activeCategory || "all").toLowerCase();
+  const fixedCategories = ["bags", "shoes", "pants", "t-shirts", "accessories"];
+%>
+
+<div class="w-full min-h-screen flex items-start px-20 py-20">
+  <div class="w-[20%] flex flex-col items-start">
+    <h3 class="text-lg font-semibold mb-4">Categories</h3>
+    <form method="get" action="/shop" class="w-full">
+      <% if (sort) { %>
+        <input type="hidden" name="sort" value="<%= sort %>">
+      <% } %>
+      <select name="category" onchange="this.form.submit()" class="border px-3 py-2 rounded w-full">
+        <option value="all" <%= safeActiveCategory === "all" ? "selected" : "" %>>
+          All
+        </option>
+        <% fixedCategories.forEach(cat => { %>
+          <option value="<%= cat %>" <%= safeActiveCategory === cat ? "selected" : "" %>>
+            <%= cat.charAt(0).toUpperCase() + cat.slice(1) %>
+          </option>
+        <% }) %>
+      </select>
+    </form>
+
+    <div class="mt-10">
+      <a href="/contact" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded transition transform hover:-translate-y-1 hover:scale-105">
+        Contact Us
+      </a>
+    </div>
+  </div>
+
+  <div class="w-[80%] flex flex-col gap-5">
+    <div class="mb-6 flex justify-end">
+      <form method="get" action="/shop">
+        <% if (activeCategory && activeCategory !== 'all') { %>
+          <input type="hidden" name="category" value="<%= activeCategory %>">
+        <% } %>
+        <select name="sort" onchange="this.form.submit()" class="border px-3 py-2 rounded">
+          <option value="all" <%= sort === "all" ? "selected" : "" %>>
+            All Products
+          </option>
+          <option value="discounted" <%= sort === "discounted" ? "selected" : "" %>>
+            Discounted Products
+          </option>
+        </select>
+      </form>
+    </div>
+
+    <div class="flex items-start gap-5 flex-wrap">
+      <% if (products.length === 0) { %>
+        <div class="w-full text-center text-gray-500 text-lg mt-10">
+          No discounted products found.
+        </div>
+      <% } else { %>
+        <% products.forEach(function(product) { %>
+          <div class="w-60 mb-5 relative">
+            <% if (product.discount > 0) { %>
+              <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-<%= product.discount %>%</div>
+            <% } %>
+            <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
+              <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="" />
+            </div>
+            <div class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]">
+              <div>
+                <h3 class="text-sm font-semibold"><%= product.name %></h3>
+                <div class="flex items-center gap-1">
+                  <% if (product.discount > 0) { %>
+                    <span class="line-through text-xs">₹<%= product.price %></span>
+                    <span class="text-green-600 text-sm font-bold">₹<%= Math.round(product.price * (1 - product.discount / 100)) %></span>
+                  <% } else { %>
+                    <span class="text-sm font-bold">₹<%= product.price %></span>
+                  <% } %>
+                </div>
+              </div>
+              <a class="w-7 h-7 flex items-center justify-center rounded-full bg-white" href="/addtocart/<%= product._id %>">
+                <i class="ri-add-line"></i>
+              </a>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<script>
+  setTimeout(() => {
+    const msg = document.getElementById("flash-msg");
+    if (msg) {
+      msg.style.display = "none";
+    }
+  }, 3000);
+</script>

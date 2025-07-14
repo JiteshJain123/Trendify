@@ -1,0 +1,53 @@
+<%- include('./partials/owner-header') %>
+
+<div class="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl mx-auto bg-white shadow-xl rounded-lg p-10">
+    <h2 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">Edit Product Details</h2>
+
+    <form action="/owners/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data" class="space-y-6">
+      
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Product Name</label>
+        <input type="text" name="name" value="<%= product.name %>" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Price (₹)</label>
+          <input type="number" name="price" value="<%= product.price %>" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Discount (%)</label>
+          <input type="number" name="discount" value="<%= product.discount %>" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Background Color</label>
+        <input type="text" name="bgcolor" value="<%= product.bgcolor %>" placeholder="#ffffff" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Panel Color</label>
+        <input type="text" name="panelcolor" value="<%= product.panelcolor %>" placeholder="#000000" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Text Color</label>
+        <input type="text" name="textcolor" value="<%= product.textcolor %>" placeholder="#333333" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-gray-700 font-medium mb-1">Change Product Image</label>
+        <input type="file" name="image" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <p class="text-gray-500 text-sm mt-1">Leave empty if you don't want to update the image.</p>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition">
+        Update Product
+      </button>
+    </form>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

@@ -1,0 +1,71 @@
+<%- include('./partials/owner-header') %>
+
+<% if(success.length > 0){ %>
+  <div class="fixed top-5 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50">
+    <%= success %>
+  </div>
+<% } %>
+
+<div class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-10">
+    <h2 class="text-3xl font-extrabold text-gray-800 mb-8 text-center">Create New Product</h2>
+
+    <form action="/products/create" method="post" enctype="multipart/form-data" class="space-y-8">
+      <div>
+        <label class="block text-gray-700 font-medium mb-2">Product Image</label>
+        <input name="image" type="file" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Product Name</label>
+          <input name="name" type="text" placeholder="Enter product name" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Product Price (₹)</label>
+          <input name="price" type="number" placeholder="e.g. 1000" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Discount (%)</label>
+          <input name="discount" type="number" placeholder="e.g. 10" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Category</label>
+          <select name="category" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            <option value="">Select category</option>
+            <option value="bags">Bags</option>
+            <option value="shoes">Shoes</option>
+            <option value="pants">Pants</option>
+            <option value="t-shirts">T-Shirts</option>
+            <option value="accessories">Accessories</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-semibold mt-6 mb-2">Panel & Color Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Background Color</label>
+          <input name="bgcolor" type="text" placeholder="#ffffff" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Panel Color</label>
+          <input name="panelcolor" type="text" placeholder="#000000" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Text Color</label>
+          <input name="textcolor" type="text" placeholder="#333333" class="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition">
+        Create New Product
+      </button>
+    </form>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

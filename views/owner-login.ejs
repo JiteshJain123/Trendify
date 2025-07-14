@@ -1,0 +1,32 @@
+<%- include('./partials/header') %>
+
+<div class="w-full min-h-screen flex justify-center items-center bg-gray-100 py-10">
+  <div class="w-full max-w-md bg-white p-8 rounded shadow-lg">
+    <h2 class="text-2xl mb-4 font-bold text-center">Owner Login</h2>
+
+    <div class="bg-blue-50 border border-blue-300 text-blue-700 p-3 rounded mb-4 text-sm">
+      <strong>Demo Owner:</strong> demo@shop.com / Demouser@1234988
+      <button
+        onclick="fillDemo()"
+        class="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+      >
+        Autofill
+      </button>
+    </div>
+
+    <form action="/owners/login" method="POST">
+      <input id="email" class="block w-full mb-3 px-3 py-2 border rounded" type="email" placeholder="Email" name="email" required>
+      <input id="password" class="block w-full mb-3 px-3 py-2 border rounded" type="password" placeholder="Password" name="password" required>
+      <button class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition">Login</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function fillDemo() {
+    document.getElementById('email').value = 'demo@shop.com';
+    document.getElementById('password').value = 'Demouser@1234988';
+  }
+</script>
+
+<%- include('./partials/footer') %>

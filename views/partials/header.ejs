@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body class="font-['helvetica_now_display']">
+    <nav class="w-full flex items-center justify-between px-5 py-3 bg-blue-300">
+      <h3 class="text-xl">Trendify</h3>
+      <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
+        <div class="flex gap-5">
+          <a class="font-bold" href="/shop">Shop</a>
+          <a class="font-bold" href="/cart">Cart</a>
+          <a class="font-bold" href="/account">My Account</a>
+          <a class="text-red-500 font-extrabold" href="/logout">Logout</a>
+        </div>
+      <% } %>
+    </nav>
+
+    <% if (error && error.length > 0) { %>
+      <div class="bg-red-100 text-red-700 px-4 py-2 my-2 rounded"><%= error %></div>
+    <% } %>
+    <% if (success && success.length > 0) { %>
+      <div class="bg-green-100 text-green-700 px-4 py-2 my-2 rounded"><%= success %></div>
+    <% } %>
