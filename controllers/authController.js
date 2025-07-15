@@ -118,7 +118,7 @@ const loginOwner = async (req, res) => {
 const logout = (req, res) => {
   res.clearCookie("token");
   res.clearCookie("ownerToken");
-  req.flash("success", "Logged out successfully");
+  req.flash("success", "Owner logged out successfully");
   res.redirect("/");
 };
 

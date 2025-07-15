@@ -8,6 +8,7 @@ router.get("/", (req, res) => {
   res.render("choose-role", {
     error: req.flash("error"),
     success: req.flash("success"),
+    title: "Choose Role",
     loggedIn: false,
     env: process.env.NODE_ENV 
   });
@@ -16,7 +17,7 @@ router.get("/", (req, res) => {
 router.get("/user-home", (req, res) => {
   let error = req.flash("error");
   let success = req.flash("success");
-  res.render("index", { error, success, loggedIn: true });
+  res.render("index", { error,title: "User-Home", success, loggedIn: false });
 });
 
 router.get("/shop", isloggedin, async (req, res) => {
@@ -43,6 +44,7 @@ router.get("/shop", isloggedin, async (req, res) => {
     categories: allCategories,
     activeCategory: selectedCategory, 
     sort: req.query.sort || "all",
+    title: "Shop",
     error,
     success,
     loggedIn: true,
@@ -50,7 +52,7 @@ router.get("/shop", isloggedin, async (req, res) => {
 });
 
 router.get("/contact", (req, res) => {
-  res.render("contact", { error: req.flash("error"), success: req.flash("success"), loggedIn: true });
+  res.render("contact", { error: req.flash("error"),title: "Contact Details", success: req.flash("success"), loggedIn: true });
 });
 
 router.get("/shop/discounted", isloggedin, async (req, res) => {
@@ -58,7 +60,7 @@ router.get("/shop/discounted", isloggedin, async (req, res) => {
   let success = req.flash("success");
   let products = await productModel.find({ discount: { $gt: 0 } });
 
-  res.render("shop", { products, error, success, loggedIn: true, activeCategory: "discounted" });
+  res.render("shop", { products, error, success,title: "Discounted Products", loggedIn: true, activeCategory: "discounted" });
 });
 
 
@@ -75,7 +77,7 @@ router.get("/cart", isloggedin, async (req, res) => {
     });
   }
 
-  res.render("cart", { user, bill: totalBill, error: req.flash("error"), success: req.flash("success"), loggedIn: true });
+  res.render("cart", { user, bill: totalBill,title: "Cart", error: req.flash("error"), success: req.flash("success"), loggedIn: true });
 });
 
 router.get("/addtocart/:productid", isloggedin, async (req, res) => {
@@ -127,7 +129,7 @@ router.get("/removefromcart/:productid", isloggedin, async (req, res) => {
 
 router.get("/account", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email }).populate("cart.product");
-  res.render("account", { user, error: req.flash("error"), success: req.flash("success"), loggedIn: true });
+  res.render("account", { user, error: req.flash("error"),title: "User Account", success: req.flash("success"), loggedIn: true });
 });
 
 router.get("/logout", isloggedin, async (req, res) => {

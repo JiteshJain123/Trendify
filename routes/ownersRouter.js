@@ -10,7 +10,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.get("/register", (req, res) => {
-  res.render("owner-register", { error: req.flash("error"), success: req.flash("success"), loggedIn: false });
+  res.render("owner-register", { error: req.flash("error"),title: "Owner Register", success: req.flash("success"), loggedIn: false });
 });
 
 if (process.env.NODE_ENV === "development") {
@@ -46,6 +46,7 @@ router.get("/admin", isOwnerLoggedIn, async (req, res) => {
       products,
       error: req.flash("error"),
       success: req.flash("success"),
+      title: "All Products",
       loggedIn: false,
       ownerLoggedIn: true
     });
@@ -59,19 +60,20 @@ router.get("/createProducts", isOwnerLoggedIn, (req, res) => {
   res.render("createproducts", {
     error: req.flash("error"),
     success: req.flash("success"),
+    title: "Add Product",
     loggedIn: true
   });
 });
 
 router.get("/login", (req, res) => {
-  res.render("owner-login", { error: req.flash("error"), success: req.flash("success"), loggedIn: false });
+  res.render("owner-login", { error: req.flash("error"),title: "Owner Login", success: req.flash("success"), loggedIn: false });
 });
 
 router.post("/login", loginOwner);
 
 router.get("/account", isOwnerLoggedIn, async (req, res) => {
   const owner = await ownerModel.findOne({ email: req.owner.email });
-  res.render("owner-account", { owner, error: req.flash("error"), success: req.flash("success"), loggedIn: false });
+  res.render("owner-account", { owner, error: req.flash("error"),title: "Owner Account", success: req.flash("success"), loggedIn: false });
 });
 
 router.get("/logout", logout);
@@ -83,7 +85,7 @@ router.get("/products/edit/:id", isOwnerLoggedIn, async (req, res) => {
       req.flash("error", "Product not found");
       return res.redirect("/owners/admin");
     }
-    res.render("edit-product", { product, error: req.flash("error"), success: req.flash("success"), loggedIn: false, ownerLoggedIn: true });
+    res.render("edit-product", { product, error: req.flash("error"),title: "Edit Product", success: req.flash("success"), loggedIn: false, ownerLoggedIn: true });
   } catch (err) {
     req.flash("error", "Something went wrong");
     res.redirect("/owners/admin");

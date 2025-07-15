@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title><%= title %></title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/stylesheets/style.css">
   </head>
   <body class="font-['helvetica_now_display']">
     <nav class="w-full flex items-center justify-between px-5 py-3 bg-blue-300">
-      <h3 class="text-xl">Trendify</h3>
+      <h3 class="text-xl font-bold">Trendify</h3>
       <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
         <div class="flex gap-5">
           <a class="font-bold" href="/shop">Shop</a>
