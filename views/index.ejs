@@ -1,63 +1,104 @@
-<%- include('./partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex flex-col min-h-screen">
 
-<!-- Bootstrap Flash Toasts -->
-<div aria-live="polite" aria-atomic="true" class="position-relative z-50">
-  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+    <!-- Header -->
+    <%- include('./partials/header') %>
 
-    <% if (typeof error !== 'undefined' && error.length > 0) { %>
-      <div class="toast align-items-center text-white bg-danger border-0 show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            <%= error[0] %>
+    <!-- Main Content -->
+    <main class="flex-grow">
+      <!-- Auth Wrapper -->
+      <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-tr from-indigo-100 to-blue-200 p-4">
+        <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2 transition-all duration-300">
+
+          <!-- Left Banner / Info -->
+          <div class="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-10">
+            <h1 class="text-4xl font-bold mb-4">Welcome to Trendify</h1>
+            <p class="text-lg text-center">Your stylish journey starts here. Join us and explore the trend!</p>
           </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+
+          <!-- Right Form Section -->
+          <div class="w-full p-10">
+            <!-- Register Section -->
+            <div id="registerSection">
+              <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Create Account</h2>
+              <form action="/users/register" method="POST" autocomplete="off">
+                <input type="text" name="fullname" placeholder="Full Name" required
+                  class="w-full mb-4 px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl" />
+
+                <input type="email" name="email" placeholder="Email" required
+                  class="w-full mb-4 px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl" />
+
+                <!-- Password with tooltip text box -->
+                <div class="relative w-full mb-6 group">
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    class="w-full px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl"
+                  />
+                  <p class="text-xs text-gray-600 mt-1 hidden group-hover:block">
+                    Must be 8+ characters with one uppercase letter, one lowercase, and one special character.
+                  </p>
+                </div>
+
+                <button type="submit"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-lg transition-all duration-200">
+                  Register
+                </button>
+              </form>
+              <p class="text-sm text-gray-600 mt-4 text-center">
+                Already have an account?
+                <button onclick="toggleForm('login')" class="text-blue-600 hover:underline font-medium">Login here</button>
+              </p>
+            </div>
+
+            <!-- Login Section -->
+            <div id="loginSection" class="hidden">
+              <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Welcome Back</h2>
+              <form action="/users/login" method="POST" autocomplete="off">
+                <input type="email" name="email" placeholder="Email" required
+                  class="w-full mb-4 px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl" />
+                <input type="password" name="password" placeholder="Password" required
+                  class="w-full mb-6 px-5 py-4 bg-gray-100 border border-gray-300 rounded-xl" />
+                <button type="submit"
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-lg transition-all duration-200">
+                  Login
+                </button>
+              </form>
+              <p class="text-sm text-gray-600 mt-4 text-center">
+                Don't have an account?
+                <button onclick="toggleForm('register')" class="text-blue-600 hover:underline font-medium">Register here</button>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    <% } %>
+    </main>
 
-    <% if (typeof success !== 'undefined' && success.length > 0) { %>
-      <div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            <%= success[0] %>
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-      </div>
-    <% } %>
+    <!-- Footer -->
+    <%- include('./partials/footer') %>
 
-  </div>
-</div>
-
-<div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-    
-    <!-- Register -->
-    <div class="p-10">
-      <h2 class="text-3xl font-bold text-gray-800 mb-2">
-        Welcome to <span class="text-blue-500">Trendify</span>
-      </h2>
-      <p class="text-gray-500 mb-8">Create your account</p>
-      <form action="/users/register" method="post" autocomplete="off">
-        <input class="w-full bg-gray-100 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition" type="text" name="fullname" placeholder="Full Name" required />
-        <input class="w-full bg-gray-100 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition" type="email" name="email" placeholder="Email" required />
-        <input class="w-full bg-gray-100 px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition" type="password" name="password" placeholder="Password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:&quot;&lt;&gt;?[\]\\;',./`~]).{12,}" title="At least 8 characters, one uppercase letter, one special character, and lowercase letters required" required />
-        <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition duration-300">Create My Account</button>
-      </form>
-    </div>
-
-    <!-- Login -->
-    <div class="bg-blue-500 p-10 flex flex-col justify-center text-white">
-      <h2 class="text-3xl font-bold mb-2">Welcome Back!</h2>
-      <p class="mb-8 text-blue-100">Login to your account</p>
-      <form action="/users/login" method="post" autocomplete="off">
-        <input class="w-full bg-white text-gray-700 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition" type="email" name="email" placeholder="Email" required />
-        <input class="w-full bg-white text-gray-700 px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition" type="password" name="password" placeholder="Password" required />
-        <button type="submit" class="w-full bg-white text-blue-500 font-semibold py-3 rounded-lg hover:bg-gray-100 transition duration-300">Login</button>
-      </form>
-    </div>
-
-  </div>
-</div>
-
-<%- include('./partials/footer') %>
+    <!-- Toggle Script -->
+    <script>
+      function toggleForm(view) {
+        const register = document.getElementById('registerSection');
+        const login = document.getElementById('loginSection');
+        if (view === 'login') {
+          register.classList.add('hidden');
+          login.classList.remove('hidden');
+        } else {
+          login.classList.add('hidden');
+          register.classList.remove('hidden');
+        }
+      }
+    </script>
+  </body>
+</html>

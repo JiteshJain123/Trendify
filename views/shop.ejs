@@ -1,14 +1,13 @@
 <%- include('./partials/header') %>
 
-
 <%
   let safeActiveCategory = (activeCategory || "all").toLowerCase();
   const fixedCategories = ["bags", "shoes", "pants", "t-shirts", "accessories"];
 %>
 
-<div class="w-full min-h-screen flex items-start px-20 py-20 gap-5">
+<div class="w-full min-h-screen flex flex-col lg:flex-row gap-6 px-4 sm:px-6 lg:px-20 py-10 bg-gradient-to-br from-purple-100 to-blue-100">
   <!-- Sidebar -->
-  <div class="w-[20%] flex flex-col items-start">
+  <div class="w-full lg:w-[20%] flex flex-col items-start">
     <h3 class="text-lg font-semibold mb-4">Categories</h3>
     <form method="get" action="/shop" class="w-full">
       <% if (sort) { %>
@@ -22,7 +21,7 @@
       </select>
     </form>
 
-    <div class="mt-10">
+    <div class="mt-6">
       <a href="/contact" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded transition transform hover:-translate-y-1 hover:scale-105">
         Contact Us
       </a>
@@ -30,34 +29,36 @@
   </div>
 
   <!-- Product List -->
-  <div class="w-[80%] flex flex-col gap-5">
-    <div class="mb-6 flex justify-end">
-      <form method="get" action="/shop">
+  <div class="w-full lg:w-[80%] flex flex-col gap-6">
+    <!-- Sort Dropdown -->
+    <div class="flex justify-end">
+      <form method="get" action="/shop" class="w-full sm:w-auto">
         <% if (activeCategory && activeCategory !== 'all') { %>
           <input type="hidden" name="category" value="<%= activeCategory %>">
         <% } %>
-        <select name="sort" onchange="this.form.submit()" class="border px-3 py-2 rounded">
+        <select name="sort" onchange="this.form.submit()" class="border px-3 py-2 rounded w-full sm:w-auto">
           <option value="all" <%= sort === "all" ? "selected" : "" %>>All Products</option>
           <option value="discounted" <%= sort === "discounted" ? "selected" : "" %>>Discounted Products</option>
         </select>
       </form>
     </div>
 
-    <div class="flex items-start gap-5 flex-wrap">
+    <!-- Product Grid -->
+    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
       <% if (products.length === 0) { %>
-        <div class="w-full text-center text-gray-500 text-lg mt-10">
+        <div class="col-span-full text-center text-gray-500 text-lg mt-10">
           No products found.
         </div>
       <% } else { %>
         <% products.forEach(function(product) { %>
-          <div class="w-60 mb-5 relative">
+          <div class="relative bg-white rounded shadow-md overflow-hidden">
             <% if (product.discount > 0) { %>
               <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
                 -<%= product.discount %>%
               </div>
             <% } %>
             <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
-              <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>" />
+              <img class="h-48 object-contain" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>" />
             </div>
             <div class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]">
               <div>

@@ -1,32 +1,42 @@
 <%- include('./partials/owner-header') %>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex justify-center items-center py-10">
-  <div class="bg-white shadow-xl rounded-2xl p-10 w-full max-w-lg">
-    <h2 class="text-3xl font-bold text-center mb-6">My Account</h2>
+<div class="min-h-[90vh] bg-gradient-to-br from-blue-100 to-purple-200 py-10 px-4 flex justify-center items-center">
+  <div class="bg-white shadow-xl rounded-2xl p-10 w-full max-w-6xl">
+    <h2 class="text-4xl font-bold text-center text-gray-800 mb-10">My Account</h2>
 
-    <div class="space-y-4 text-gray-700">
-      <div class="flex justify-between border-b pb-2">
-        <span class="font-semibold">Full Name:</span>
-        <span><%= owner.fullname %></span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 text-gray-800 text-lg">
+      <!-- Info Section -->
+      <div class="bg-gray-50 p-8 rounded-xl border border-gray-200 shadow-sm">
+        <div class="mb-5">
+          <p class="font-semibold">Full Name:</p>
+          <p class="mt-1"><%= owner.fullname %></p>
+        </div>
+        <div class="mb-5">
+          <p class="font-semibold">Email:</p>
+          <p class="mt-1 break-words"><%= owner.email %></p>
+        </div>
+        <div>
+          <p class="font-semibold">GSTIN:</p>
+          <% if (owner.gstin) { %>
+            <p class="mt-1"><%= owner.gstin %></p>
+          <% } else { %>
+            <p class="mt-1 italic text-gray-400">Not provided</p>
+          <% } %>
+        </div>
       </div>
-      <div class="flex justify-between border-b pb-2">
-        <span class="font-semibold">Email:</span>
-        <span><%= owner.email %></span>
-      </div>
-      <div class="flex justify-between border-b pb-2">
-        <span class="font-semibold">GSTIN:</span>
-        <% if (owner.gstin) { %>
-          <span><%= owner.gstin %></span>
-        <% } else { %>
-          <span class="italic text-gray-400">Not provided</span>
-        <% } %>
-      </div>
-    </div>
 
-    <div class="mt-8 text-center flex flex-wrap justify-center gap-4">
-      <a href="/owners/createProducts" class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full shadow transition transform hover:scale-105">Add New Product</a>
-      <a href="/owners/admin" class="inline-block bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full shadow transition transform hover:scale-105">All Products</a>
-      <a href="/logout" class="inline-block bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full shadow transition transform hover:scale-105">Logout</a>
+      <!-- Button Section -->
+      <div class="flex flex-col justify-center bg-gray-50 p-8 rounded-xl border border-gray-200 shadow-sm space-y-5">
+        <a href="/owners/createProducts" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow text-center transition transform hover:scale-105">
+          Add New Product
+        </a>
+        <a href="/owners/admin" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg shadow text-center transition transform hover:scale-105">
+          All Products
+        </a>
+        <a href="/logout" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg shadow text-center transition transform hover:scale-105">
+          Logout
+        </a>
+      </div>
     </div>
   </div>
 </div>

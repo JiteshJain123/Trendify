@@ -11,3 +11,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+ const showLoginBtn = document.getElementById("show-login");
+  const showRegisterBtn = document.getElementById("show-register");
+
+  if (showLoginBtn && showRegisterBtn) {
+    showLoginBtn.addEventListener("click", function () {
+      document.getElementById("register-section").classList.add("hidden");
+      document.getElementById("login-section").classList.remove("hidden");
+    });
+
+    showRegisterBtn.addEventListener("click", function () {
+      document.getElementById("login-section").classList.add("hidden");
+      document.getElementById("register-section").classList.remove("hidden");
+    });
+  }

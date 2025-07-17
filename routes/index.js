@@ -8,6 +8,7 @@ const userModel = require("../models/user-model");
 router.get("/", (req, res) => {
   res.render("choose-role", {
     title: "Choose Role",
+    hideHamburger: true, 
     loggedIn: false,
     env: process.env.NODE_ENV,
   });
@@ -17,9 +18,11 @@ router.get("/", (req, res) => {
 router.get("/user-home", (req, res) => {
   res.render("index", {
     title: "User-Home",
+    hideHamburger: true,
     loggedIn: false,
     success: req.session.success,
     error: req.session.error,
+    passwordError: req.query.passwordError || null
   });
   req.session.success = null;
   req.session.error = null;
@@ -40,6 +43,7 @@ router.get("/shop", isloggedin, async (req, res) => {
   res.render("shop", {
     title: "Shop",
     products,
+    hideHamburger: false, 
     categories: allCategories,
     activeCategory: selectedCategory,
     sort: req.query.sort || "all",
@@ -55,6 +59,7 @@ router.get("/shop", isloggedin, async (req, res) => {
 router.get("/contact", (req, res) => {
   res.render("contact", {
     title: "Contact Details",
+    hideHamburger: false, 
     loggedIn: true,
   });
 });
@@ -93,6 +98,7 @@ router.get("/cart", isloggedin, async (req, res) => {
     title: "Cart",
     user,
     bill: totalBill,
+    hideHamburger: false, 
     loggedIn: true,
     success: req.session.success,
     error: req.session.error,
@@ -153,8 +159,9 @@ router.get("/account", isloggedin, async (req, res) => {
   res.render("account", {
     title: "User Account",
     user,
+    hideHamburger: false,
     loggedIn: true,
-    success: req.session.success, // 📌 Optional
+    success: req.session.success, 
     error: req.session.error,
   });
   req.session.success = null;

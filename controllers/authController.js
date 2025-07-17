@@ -21,8 +21,8 @@ const registerUser = async (req, res) => {
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:"<>?[\]\\;',./`~]).{8,}$/;
     if (!passwordRegex.test(password)) {
-      req.session.error = "Password must be at least 8 characters long and include at least one uppercase letter, one special character, and lowercase letters.";
-      return res.redirect("/user-home");
+      return res.redirect("/user-home?passwordError=Password must contain at least 8 characters, 1 uppercase letter, and 1 special character");
+
     }
 
     const existingUser = await userModel.findOne({ email });
@@ -106,7 +106,6 @@ const loginOwner = async (req, res) => {
 
     // Optional: Enable success message
     req.session.success = "Owner logged in successfully";
-
     return res.redirect("/owners/account");
   } catch (err) {
     req.session.error = "Something went wrong";

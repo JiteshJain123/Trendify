@@ -4,18 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+    
+    <!-- Remix Icon -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/stylesheets/style.css">
-
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   </head>
 
   <body class="font-['helvetica_now_display']">
-    <nav class="w-full flex items-center justify-between px-5 py-3 bg-blue-300">
-      <h3 class="text-xl font-bold text-black">Trendify Owner</h3>
-      <div class="flex gap-5">
+    <!-- Navbar -->
+    <nav class="w-full bg-blue-300 px-5 py-3 flex justify-between items-center">
+      <h3 class="text-xl font-bold">Trendify Owner</h3>
+
+      <% if (typeof hideHamburger === 'undefined' || !hideHamburger) { %>
+        <button id="menu-toggle" class="lg:hidden text-2xl">
+          <i class="ri-menu-line"></i>
+        </button>
+      <% } %>
+
+      <div id="menu" class="hidden lg:flex gap-6">
         <a class="text-gray-700 hover:text-blue-500 font-extrabold" href="/owners/account">My Account</a>
         <a class="text-gray-700 hover:text-blue-500 font-extrabold" href="/owners/createProducts">Add Product</a>
         <a class="text-gray-700 hover:text-blue-500 font-extrabold" href="/owners/admin">All Products</a>
@@ -23,22 +37,47 @@
       </div>
     </nav>
 
-    <!-- Bootstrap Alert for Flash Messages -->
-    <div class="container mt-3">
+    <% if (typeof hideHamburger === 'undefined' || !hideHamburger) { %>
+      <!-- Mobile Dropdown -->
+      <div id="mobile-menu" class="lg:hidden hidden flex-col bg-blue-200 px-5 py-4 space-y-3">
+        <a class="block text-gray-700 hover:text-blue-500 font-extrabold" href="/owners/account">My Account</a>
+        <a class="block text-gray-700 hover:text-blue-500 font-extrabold" href="/owners/createProducts">Add Product</a>
+        <a class="block text-gray-700 hover:text-blue-500 font-extrabold" href="/owners/admin">All Products</a>
+        <a class="block text-red-500 hover:text-red-700 font-extrabold" href="/owners/logout">Logout</a>
+      </div>
+    <% } %>
+
+    <!-- Flash Alerts -->
+<% if (success || error) { %>
+  <div class="flex justify-center mt-4">
+    <div class="w-[90%] md:w-[70%] lg:w-[50%]">
       <% if (success) { %>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <%= success %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+          <strong class="font-bold">Success! </strong>
+          <span class="block sm:inline"><%= success %></span>
         </div>
       <% } %>
-
       <% if (error) { %>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <%= error %>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong class="font-bold">Error! </strong>
+          <span class="block sm:inline"><%= error %></span>
         </div>
       <% } %>
     </div>
+  </div>
+<% } %>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <% if (typeof hideHamburger === 'undefined' || !hideHamburger) { %>
+      <!-- Hamburger Script -->
+      <script>
+        const toggleBtn = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        toggleBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      </script>
+    <% } %>

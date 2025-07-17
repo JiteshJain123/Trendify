@@ -76,6 +76,7 @@ router.get("/login", (req, res) => {
   res.render("owner-login", {
     error: res.locals.error,
     success: res.locals.success,
+    hideHamburger: true, 
     title: "Owner Login",
     loggedIn: false
   });
