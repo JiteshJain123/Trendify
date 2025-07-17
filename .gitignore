@@ -4,4 +4,4 @@ node_modules
 config/*
 !config/multer-config.js
 !config/mongoose-connection.js
-
+!config/keys.js
