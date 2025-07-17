@@ -4,100 +4,122 @@ const isloggedin = require("../middleware/isLoggedIn");
 const productModel = require("../models/product-model");
 const userModel = require("../models/user-model");
 
+// ✅ Route: choose role
 router.get("/", (req, res) => {
   res.render("choose-role", {
-    error: req.flash("error"),
-    success: req.flash("success"),
     title: "Choose Role",
     loggedIn: false,
-    env: process.env.NODE_ENV 
+    env: process.env.NODE_ENV,
   });
 });
 
+// ✅ Route: user home
 router.get("/user-home", (req, res) => {
-  let error = req.flash("error");
-  let success = req.flash("success");
-  res.render("index", { error,title: "User-Home", success, loggedIn: false });
+  res.render("index", {
+    title: "User-Home",
+    loggedIn: false,
+    success: req.session.success,
+    error: req.session.error,
+  });
+  req.session.success = null;
+  req.session.error = null;
 });
 
+// ✅ Route: shop
 router.get("/shop", isloggedin, async (req, res) => {
-  let error = req.flash("error");
-  let success = req.flash("success");
-
-  const selectedCategory = req.query.category ? req.query.category.toLowerCase() : "all";
+  const selectedCategory = req.query.category?.toLowerCase() || "all";
   const filterDiscounted = req.query.sort === "discounted";
 
   let query = {};
-  if (selectedCategory !== "all") {
-    query.category = selectedCategory;
-  }
-  if (filterDiscounted) {
-    query.discount = { $gt: 0 };
-  }
+  if (selectedCategory !== "all") query.category = selectedCategory;
+  if (filterDiscounted) query.discount = { $gt: 0 };
 
   const products = await productModel.find(query);
-
   const allCategories = await productModel.distinct("category");
 
   res.render("shop", {
+    title: "Shop",
     products,
     categories: allCategories,
-    activeCategory: selectedCategory, 
+    activeCategory: selectedCategory,
     sort: req.query.sort || "all",
-    title: "Shop",
-    error,
-    success,
+    loggedIn: true,
+    success: req.session.success, // 📌 Add this
+    error: req.session.error,     // 📌 Add this
+  });
+  req.session.success = null;
+  req.session.error = null;
+});
+
+// ✅ Route: contact
+router.get("/contact", (req, res) => {
+  res.render("contact", {
+    title: "Contact Details",
     loggedIn: true,
   });
 });
 
-router.get("/contact", (req, res) => {
-  res.render("contact", { error: req.flash("error"),title: "Contact Details", success: req.flash("success"), loggedIn: true });
-});
-
+// ✅ Route: discounted only
 router.get("/shop/discounted", isloggedin, async (req, res) => {
-  let error = req.flash("error");
-  let success = req.flash("success");
-  let products = await productModel.find({ discount: { $gt: 0 } });
+  const products = await productModel.find({ discount: { $gt: 0 } });
 
-  res.render("shop", { products, error, success,title: "Discounted Products", loggedIn: true, activeCategory: "discounted" });
+  res.render("shop", {
+    title: "Discounted Products",
+    products,
+    activeCategory: "discounted",
+    loggedIn: true,
+  });
 });
 
-
+// ✅ Route: cart
 router.get("/cart", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email }).populate("cart.product");
   let totalBill = 0;
 
-  if (user.cart && user.cart.length > 0) {
-    user.cart.forEach(item => {
-      if (item.product && item.product.price !== undefined) {
-        let itemTotal = ((Number(item.product.price) + 20) - Number(item.product.discount)) * item.quantity;
-        totalBill += itemTotal;
-      }
-    });
-  }
+  user.cart?.forEach(item => {
+    if (item.product?.price !== undefined && item.product?.discount !== undefined) {
+      const price = Number(item.product.price);
+      const discountPercentage = Number(item.product.discount);
+      const discountedPrice = Math.round(price * (1 - discountPercentage / 100)); // 🟢 percentage discount
+      const platformFee = 20;
+      const quantity = item.quantity;
 
-  res.render("cart", { user, bill: totalBill,title: "Cart", error: req.flash("error"), success: req.flash("success"), loggedIn: true });
+      const itemTotal = (discountedPrice + platformFee) * quantity;
+      totalBill += itemTotal;
+    }
+  });
+
+  res.render("cart", {
+    title: "Cart",
+    user,
+    bill: totalBill,
+    loggedIn: true,
+    success: req.session.success,
+    error: req.session.error,
+  });
+
+  req.session.success = null;
+  req.session.error = null;
 });
 
+
+// ✅ Add to cart
 router.get("/addtocart/:productid", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email });
-  let existingProduct = user.cart.find(item => item.product && item.product.toString() === req.params.productid);
+  let existing = user.cart.find(i => i.product?.toString() === req.params.productid);
 
-  if (existingProduct) {
-    existingProduct.quantity += 1;
-  } else {
-    user.cart.push({ product: req.params.productid, quantity: 1 });
-  }
+  if (existing) existing.quantity += 1;
+  else user.cart.push({ product: req.params.productid, quantity: 1 });
 
   await user.save();
-  req.flash("success", "Product added to cart");
+  req.session.success = "Product added to cart";
   res.redirect("/shop");
 });
 
+// ✅ Increase qty
 router.get("/increaseqty/:productid", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email });
-  let item = user.cart.find(i => i.product && i.product.toString() === req.params.productid);
+  let item = user.cart.find(i => i.product?.toString() === req.params.productid);
   if (item) {
     item.quantity += 1;
     await user.save();
@@ -105,36 +127,44 @@ router.get("/increaseqty/:productid", isloggedin, async (req, res) => {
   res.redirect("/cart");
 });
 
+// ✅ Decrease qty
 router.get("/decreaseqty/:productid", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email });
-  let item = user.cart.find(i => i.product && i.product.toString() === req.params.productid);
-  if (item && item.quantity > 1) {
-    item.quantity -= 1;
-  } else if (item && item.quantity === 1) {
-    user.cart = user.cart.filter(i => i.product && i.product.toString() !== req.params.productid);
-  }
+  let item = user.cart.find(i => i.product?.toString() === req.params.productid);
+  if (item && item.quantity > 1) item.quantity -= 1;
+  else user.cart = user.cart.filter(i => i.product?.toString() !== req.params.productid);
 
   await user.save();
   res.redirect("/cart");
 });
 
+// ✅ Remove from cart
 router.get("/removefromcart/:productid", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email });
-  user.cart = user.cart.filter(i => i.product && i.product.toString() !== req.params.productid);
-
+  user.cart = user.cart.filter(i => i.product?.toString() !== req.params.productid);
   await user.save();
-  req.flash("success", "Product removed from cart");
+  req.session.success = "Product removed from cart";
   res.redirect("/cart");
 });
 
+// ✅ Route: account
 router.get("/account", isloggedin, async (req, res) => {
   let user = await userModel.findOne({ email: req.user.email }).populate("cart.product");
-  res.render("account", { user, error: req.flash("error"),title: "User Account", success: req.flash("success"), loggedIn: true });
+  res.render("account", {
+    title: "User Account",
+    user,
+    loggedIn: true,
+    success: req.session.success, // 📌 Optional
+    error: req.session.error,
+  });
+  req.session.success = null;
+  req.session.error = null;
 });
 
-router.get("/logout", isloggedin, async (req, res) => {
+// ✅ Logout
+router.get("/logout", isloggedin, (req, res) => {
   res.clearCookie("token");
-  req.flash("success", "User logged out successfully");
+  req.session.success = "User logged out successfully";
   res.redirect("/");
 });
 

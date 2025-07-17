@@ -3,7 +3,7 @@ const router = express.Router();
 const { registerUser,loginUser,logout} = require("../controllers/authController");
 
 router.get("/", (req, res) => {
-  res.send("Users route working");
+  res.send(" working");
 });
 
 router.post("/register", registerUser);

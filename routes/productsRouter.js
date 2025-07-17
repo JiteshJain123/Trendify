@@ -17,7 +17,7 @@ router.post("/create", upload.single("image"), async (req, res) => {
     }
 
     if (!allowedCategories.includes(finalCategory)) {
-      req.flash("error", "Invalid category selected!");
+      req.session.error = "Invalid category selected!";
       return res.redirect("/owners/admin");
     }
 
@@ -41,11 +41,11 @@ router.post("/create", upload.single("image"), async (req, res) => {
 
     await newProduct.save();
 
-    req.flash("success", "Product created successfully!");
+    req.session.success = "Product created successfully!";
     res.redirect("/owners/admin");
   } catch (err) {
     console.log(err);
-    req.flash("error", "Error creating product");
+    req.session.error = "Error creating product";
     res.redirect("/owners/admin");
   }
 });

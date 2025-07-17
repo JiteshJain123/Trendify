@@ -1,51 +1,60 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const db = require("./config/mongoose-connection");
 const expressSession = require("express-session");
-const flash = require("connect-flash");
 const MongoStore = require("connect-mongo");
-const ownersRouter = require("./routes/ownersRouter");
-const usersRouter = require("./routes/usersRouter");
-const productsRouter = require("./routes/productsRouter");
-const indexRouter = require("./routes/index");
-require("dotenv").config();
 
+// ✅ Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// ✅ Session setup
 app.use(
   expressSession({
     secret: process.env.EXPRESS_SESSION_KEY,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/scatch", 
+      mongoUrl: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/scatch",
       collectionName: "sessions",
-      ttl: 14 * 24 * 60 * 60 // 14 din tak session valid
+      ttl: 14 * 24 * 60 * 60,
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // https pe true, local pe false
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 // 1 din tak cookie valid
-    }
+      maxAge: 1000 * 60 * 60 * 24,
+    },
   })
 );
 
+// ✅ Manual flash message handler
 app.use((req, res, next) => {
-  res.locals.ownerToken = req.cookies.ownerToken;
+  res.locals.success = req.session.success || null;
+  res.locals.error = req.session.error || null;
+  delete req.session.success;
+  delete req.session.error;
   next();
 });
 
-app.use(flash());
+// ✅ Owner token check
+app.use((req, res, next) => {
+  res.locals.ownerToken = req.cookies.ownerToken || null;
+  next();
+});
+
+// ✅ Static & view setup
 app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 
-app.use("/", indexRouter);
-app.use("/owners", ownersRouter);
-app.use("/users", usersRouter);
-app.use("/products", productsRouter);
+// ✅ Routes
+app.use("/", require("./routes/index"));
+app.use("/owners", require("./routes/ownersRouter"));
+app.use("/users", require("./routes/usersRouter"));
+app.use("/products", require("./routes/productsRouter"));
 
-app.listen(3000);
+// ✅ Server
+app.listen(3000); 

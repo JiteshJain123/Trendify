@@ -6,141 +6,140 @@ const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
   try {
-    let { fullname, email, password } = req.body;
+    const { fullname, email, password } = req.body;
 
     if (!fullname || !email || !password) {
-      req.flash("error", "All fields are required");
+      req.session.error = "All fields are required";
       return res.redirect("/user-home");
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      req.flash("error", "Please enter a valid email address.");
-      return res.redirect("/user-home");
-    }
-  
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:"<>?[\]\\;',./`~]).{8,}$/;
-    if (!passwordRegex.test(password)) {
-      req.flash(
-        "error",
-        "Password must be at least 8 characters long and include at least one uppercase letter, one special character, and lowercase letters."
-      );
+      req.session.error = "Please enter a valid email address.";
       return res.redirect("/user-home");
     }
 
-    let existingUser = await userModel.findOne({ email });
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:"<>?[\]\\;',./`~]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      req.session.error = "Password must be at least 8 characters long and include at least one uppercase letter, one special character, and lowercase letters.";
+      return res.redirect("/user-home");
+    }
+
+    const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      req.flash("error", "User already exists, please login");
+      req.session.error = "User already exists, please login";
       return res.redirect("/user-home");
     }
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    let createdUser = new userModel({ fullname, email, password: hash });
+    const createdUser = new userModel({ fullname, email, password: hash });
     await createdUser.save();
 
-    req.flash("success", "User created successfully!");
-    res.redirect("/user-home");
+    req.session.success = "User created successfully!";
+    return res.redirect("/user-home");
   } catch (err) {
-    req.flash("error", err.message);
-    res.redirect("/user-home");
+    req.session.error = "Something went wrong. Please try again.";
+    return res.redirect("/user-home");
   }
 };
 
 const loginUser = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
-      req.flash("error", "All fields are required");
+      req.session.error = "All fields are required";
       return res.redirect("/");
     }
 
-    let existingUser = await userModel.findOne({ email });
+    const existingUser = await userModel.findOne({ email });
     if (!existingUser) {
-      req.flash("error", "User does not exist, please register");
+      req.session.error = "User does not exist, please register";
       return res.redirect("/");
     }
 
-    let isMatch = await bcrypt.compare(password, existingUser.password);
+    const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) {
-      req.flash("error", "Invalid credentials");
+      req.session.error = "Invalid credentials";
       return res.redirect("/");
     }
 
-    let token = generateToken(existingUser);
+    const token = generateToken(existingUser);
     res.cookie("token", token, { httpOnly: true });
-    req.flash("success", "User logged in successfully");
-    res.redirect("/shop");
+
+    req.session.success = "User logged in successfully";
+    return res.redirect("/shop");
   } catch (err) {
-    req.flash("error", err.message);
-    res.redirect("/");
+    req.session.error = "Login failed. Please try again.";
+    return res.redirect("/");
   }
 };
 
 const loginOwner = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
-      req.flash("error", "All fields are required");
+      req.session.error = "All fields are required";
       return res.redirect("/owners/login");
     }
 
-    let existingOwner = await ownerModel.findOne({ email });
+    const existingOwner = await ownerModel.findOne({ email });
     if (!existingOwner) {
-      req.flash("error", "Owner does not exist");
+      req.session.error = "Owner does not exist";
       return res.redirect("/owners/login");
     }
 
-    let isMatch = await bcrypt.compare(password, existingOwner.password);
+    const isMatch = await bcrypt.compare(password, existingOwner.password);
     if (!isMatch) {
-      req.flash("error", "Invalid credentials");
+      req.session.error = "Invalid credentials";
       return res.redirect("/owners/login");
     }
 
-    let token = jwt.sign(
+    const token = jwt.sign(
       { email: existingOwner.email, role: "owner" },
       "OWNER_SECRET_KEY"
     );
     res.cookie("ownerToken", token, { httpOnly: true });
 
-    req.flash("success", "Owner logged in successfully");
-    res.redirect("/owners/account");
+    // Optional: Enable success message
+    req.session.success = "Owner logged in successfully";
+
+    return res.redirect("/owners/account");
   } catch (err) {
-    req.flash("error", err.message);
-    res.redirect("/owners/login");
+    req.session.error = "Something went wrong";
+    return res.redirect("/owners/login");
   }
 };
 
 const logout = (req, res) => {
   res.clearCookie("token");
   res.clearCookie("ownerToken");
-  req.flash("success", "Owner logged out successfully");
-  res.redirect("/");
+  req.session.success = "Owner logged out successfully";
+  return res.redirect("/");
 };
 
 const isOwnerLoggedIn = async (req, res, next) => {
   if (!req.cookies.ownerToken) {
-    req.flash("error", "Please login first");
+    req.session.error = "Please login first";
     return res.redirect("/owners/login");
   }
   try {
-    let decoded = jwt.verify(req.cookies.ownerToken, "OWNER_SECRET_KEY");
-    let owner = await ownerModel
-      .findOne({ email: decoded.email })
-      .select("-password");
+    const decoded = jwt.verify(req.cookies.ownerToken, "OWNER_SECRET_KEY");
+    const owner = await ownerModel.findOne({ email: decoded.email }).select("-password");
+
     if (!owner) {
-      req.flash("error", "Owner not found");
+      req.session.error = "Owner not found";
       return res.redirect("/owners/login");
     }
+
     req.owner = owner;
     next();
   } catch (err) {
-    req.flash("error", "Something went wrong");
-    res.redirect("/owners/login");
+    req.session.error = "Invalid token or session expired";
+    return res.redirect("/owners/login");
   }
 };
 

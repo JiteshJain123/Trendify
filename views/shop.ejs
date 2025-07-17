@@ -1,15 +1,5 @@
 <%- include('./partials/header') %>
 
-<% if (error && error.length > 0) { %>
-  <div id="flash-msg" class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-red-500 text-white rounded shadow-lg transition-opacity duration-500 z-50">
-    <%= error[0] %>
-  </div>
-<% } %>
-<% if (success && success.length > 0) { %>
-  <div id="flash-msg" class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-green-500 text-white rounded shadow-lg transition-opacity duration-500 z-50">
-    <%= success[0] %>
-  </div>
-<% } %>
 
 <%
   let safeActiveCategory = (activeCategory || "all").toLowerCase();
@@ -17,6 +7,7 @@
 %>
 
 <div class="w-full min-h-screen flex items-start px-20 py-20 gap-5">
+  <!-- Sidebar -->
   <div class="w-[20%] flex flex-col items-start">
     <h3 class="text-lg font-semibold mb-4">Categories</h3>
     <form method="get" action="/shop" class="w-full">
@@ -24,13 +15,9 @@
         <input type="hidden" name="sort" value="<%= sort %>">
       <% } %>
       <select name="category" onchange="this.form.submit()" class="border px-3 py-2 rounded w-full">
-        <option value="all" <%= safeActiveCategory === "all" ? "selected" : "" %>>
-          All
-        </option>
+        <option value="all" <%= safeActiveCategory === "all" ? "selected" : "" %>>All</option>
         <% fixedCategories.forEach(cat => { %>
-          <option value="<%= cat %>" <%= safeActiveCategory === cat ? "selected" : "" %>>
-            <%= cat.charAt(0).toUpperCase() + cat.slice(1) %>
-          </option>
+          <option value="<%= cat %>" <%= safeActiveCategory === cat ? "selected" : "" %>><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
         <% }) %>
       </select>
     </form>
@@ -42,6 +29,7 @@
     </div>
   </div>
 
+  <!-- Product List -->
   <div class="w-[80%] flex flex-col gap-5">
     <div class="mb-6 flex justify-end">
       <form method="get" action="/shop">
@@ -49,12 +37,8 @@
           <input type="hidden" name="category" value="<%= activeCategory %>">
         <% } %>
         <select name="sort" onchange="this.form.submit()" class="border px-3 py-2 rounded">
-          <option value="all" <%= sort === "all" ? "selected" : "" %>>
-            All Products
-          </option>
-          <option value="discounted" <%= sort === "discounted" ? "selected" : "" %>>
-            Discounted Products
-          </option>
+          <option value="all" <%= sort === "all" ? "selected" : "" %>>All Products</option>
+          <option value="discounted" <%= sort === "discounted" ? "selected" : "" %>>Discounted Products</option>
         </select>
       </form>
     </div>
@@ -62,16 +46,18 @@
     <div class="flex items-start gap-5 flex-wrap">
       <% if (products.length === 0) { %>
         <div class="w-full text-center text-gray-500 text-lg mt-10">
-          No discounted products found.
+          No products found.
         </div>
       <% } else { %>
         <% products.forEach(function(product) { %>
           <div class="w-60 mb-5 relative">
             <% if (product.discount > 0) { %>
-              <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-<%= product.discount %>%</div>
+              <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                -<%= product.discount %>%
+              </div>
             <% } %>
             <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
-              <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="" />
+              <img class="h-[12rem]" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>" />
             </div>
             <div class="flex justify-between bg-[<%= product.panelcolor %>] items-center px-4 py-4 text-[<%= product.textcolor %>]">
               <div>
@@ -97,12 +83,3 @@
 </div>
 
 <%- include('./partials/footer') %>
-
-<script>
-  setTimeout(() => {
-    const msg = document.getElementById("flash-msg");
-    if (msg) {
-      msg.style.display = "none";
-    }
-  }, 3000);
-</script>

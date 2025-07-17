@@ -1,18 +1,32 @@
-const jwt=require("jsonwebtoken");
-const userModel=require("../models/user-model");
+const jwt = require("jsonwebtoken");
+const userModel = require("../models/user-model");
 
 module.exports = async (req, res, next) => {
-  if(!req.cookies.token){
-    req.flash("error","Please login first");
+  // Check if token exists
+  const token = req.cookies.token;
+  if (!token) {
+    req.session.error = "Please login first";
     return res.redirect("/");
   }
+
   try {
-    let decoded = jwt.verify(req.cookies.token, process.env.JWT_KEY);
-    let user = await userModel.findOne({email : decoded.email}).select("-password");
+    // Verify JWT
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+
+    // Find user in DB
+    const user = await userModel.findOne({ email: decoded.email }).select("-password");
+    if (!user) {
+      req.session.error = "User not found";
+      return res.redirect("/");
+    }
+
+    // Attach user to req object
     req.user = user;
     next();
+
   } catch (err) {
-    req.flash("error","Something went wrong");
-    res.redirect("/");
+    console.error("JWT error:", err.message);
+    req.session.error = "Something went wrong";
+    return res.redirect("/");
   }
-}
+};

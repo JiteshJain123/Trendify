@@ -1,26 +1,37 @@
 <%- include('./partials/header') %>
 
-<!-- Flash error -->
-<% if (error && error.length > 0) { %>
-<div
-  class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-red-500 text-white rounded shadow-lg transition-opacity duration-500 z-50"
->
-  <%= error[0] %>
-</div>
-<% } %> <% if (success && success.length > 0) { %>
-<div
-  class="fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-green-500 text-white rounded shadow-lg transition-opacity duration-500 z-50"
->
-  <%= success[0] %>
-</div>
-<% } %>
+<!-- Bootstrap Flash Toasts -->
+<div aria-live="polite" aria-atomic="true" class="position-relative z-50">
+  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
 
-<div
-  class="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100"
->
-  <div
-    class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
-  >
+    <% if (typeof error !== 'undefined' && error.length > 0) { %>
+      <div class="toast align-items-center text-white bg-danger border-0 show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            <%= error[0] %>
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    <% } %>
+
+    <% if (typeof success !== 'undefined' && success.length > 0) { %>
+      <div class="toast align-items-center text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            <%= success[0] %>
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+    <% } %>
+
+  </div>
+</div>
+
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+    
     <!-- Register -->
     <div class="p-10">
       <h2 class="text-3xl font-bold text-gray-800 mb-2">
@@ -28,35 +39,10 @@
       </h2>
       <p class="text-gray-500 mb-8">Create your account</p>
       <form action="/users/register" method="post" autocomplete="off">
-        <input
-          class="w-full bg-gray-100 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-          type="text"
-          name="fullname"
-          placeholder="Full Name"
-          required
-        />
-        <input
-          class="w-full bg-gray-100 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-        />
-        <input
-          class="w-full bg-gray-100 px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
-          type="password"
-          name="password"
-          placeholder="Password"
-          pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:&quot;&lt;&gt;?[\]\\;',./`~]).{12,}"
-          title="At least 8 characters, one uppercase letter, one special character, and lowercase letters required"
-          required
-        />
-        <button
-          type="submit"
-          class="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition duration-300"
-        >
-          Create My Account
-        </button>
+        <input class="w-full bg-gray-100 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition" type="text" name="fullname" placeholder="Full Name" required />
+        <input class="w-full bg-gray-100 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition" type="email" name="email" placeholder="Email" required />
+        <input class="w-full bg-gray-100 px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 transition" type="password" name="password" placeholder="Password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:&quot;&lt;&gt;?[\]\\;',./`~]).{12,}" title="At least 8 characters, one uppercase letter, one special character, and lowercase letters required" required />
+        <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-3 rounded-lg hover:bg-blue-600 transition duration-300">Create My Account</button>
       </form>
     </div>
 
@@ -65,28 +51,12 @@
       <h2 class="text-3xl font-bold mb-2">Welcome Back!</h2>
       <p class="mb-8 text-blue-100">Login to your account</p>
       <form action="/users/login" method="post" autocomplete="off">
-        <input
-          class="w-full bg-white text-gray-700 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-          type="email"
-          name="email"
-          placeholder="Email"
-          required
-        />
-        <input
-          class="w-full bg-white text-gray-700 px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-        />
-        <button
-          type="submit"
-          class="w-full bg-white text-blue-500 font-semibold py-3 rounded-lg hover:bg-gray-100 transition duration-300"
-        >
-          Login
-        </button>
+        <input class="w-full bg-white text-gray-700 px-4 py-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition" type="email" name="email" placeholder="Email" required />
+        <input class="w-full bg-white text-gray-700 px-4 py-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition" type="password" name="password" placeholder="Password" required />
+        <button type="submit" class="w-full bg-white text-blue-500 font-semibold py-3 rounded-lg hover:bg-gray-100 transition duration-300">Login</button>
       </form>
     </div>
+
   </div>
 </div>
 
