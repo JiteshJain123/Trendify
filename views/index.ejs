@@ -96,7 +96,6 @@
 
                 <button
                   type="submit"
-                  onclick="toggleForm('login')"
                   class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-lg transition-all duration-200"
                 >
                   Register
@@ -161,23 +160,27 @@
     <!-- Toggle Script -->
     <script>
       function toggleForm(view) {
-        const register = document.getElementById('registerSection');
-        const login = document.getElementById('loginSection');
-        if (view === 'login') {
-          register.classList.add('hidden');
-          login.classList.remove('hidden');
+        const register = document.getElementById("registerSection");
+        const login = document.getElementById("loginSection");
+        if (view === "login") {
+          register.classList.add("hidden");
+          login.classList.remove("hidden");
         } else {
-          login.classList.add('hidden');
-          register.classList.remove('hidden');
+          login.classList.add("hidden");
+          register.classList.remove("hidden");
         }
       }
 
-      // Show login section if there's an error containing "invalid" or "exist" (case-insensitive)
-      <% if (typeof error !== 'undefined' && /invalid|exist/i.test(error)) { %>
-        window.addEventListener('DOMContentLoaded', function() {
-          toggleForm('login');
-        });
-      <% } %>
+      // Auto-switch based on URL param
+      window.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const showForm = urlParams.get("show");
+        if (showForm === "login") {
+          toggleForm("login");
+        } else {
+          toggleForm("register");
+        }
+      });
     </script>
   </body>
 </html>

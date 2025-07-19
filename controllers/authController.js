@@ -41,7 +41,7 @@ const registerUser = async (req, res) => {
     res.cookie("token", token, { httpOnly: true });
 
     req.session.success = "User created successfully!";
-    return res.redirect("/shop");
+    return res.redirect("/user-home?show=login");
   } catch (err) {
     console.error(err);
     req.session.error = "Something went wrong. Please try again.";
