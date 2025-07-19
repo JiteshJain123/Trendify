@@ -11,6 +11,7 @@ router.get("/", (req, res) => {
     hideHamburger: true, 
     loggedIn: false,
     env: process.env.NODE_ENV,
+    currentPath: req.path
   });
 });
 
@@ -19,10 +20,11 @@ router.get("/user-home", (req, res) => {
   res.render("index", {
     title: "User-Home",
     hideHamburger: true,
-    loggedIn: false,
+    loggedIn: req.user ? true : false,
     success: req.session.success,
     error: req.session.error,
-    passwordError: req.query.passwordError || null
+    passwordError: req.query.passwordError || null,
+    currentPath: req.path
   });
   req.session.success = null;
   req.session.error = null;
@@ -48,8 +50,9 @@ router.get("/shop", isloggedin, async (req, res) => {
     activeCategory: selectedCategory,
     sort: req.query.sort || "all",
     loggedIn: true,
-    success: req.session.success, // 📌 Add this
-    error: req.session.error,     // 📌 Add this
+    success: req.session.success, 
+    error: req.session.error,   
+    currentPath: req.path  
   });
   req.session.success = null;
   req.session.error = null;
@@ -61,6 +64,7 @@ router.get("/contact", (req, res) => {
     title: "Contact Details",
     hideHamburger: false, 
     loggedIn: true,
+    currentPath: req.path
   });
 });
 
@@ -73,6 +77,7 @@ router.get("/shop/discounted", isloggedin, async (req, res) => {
     products,
     activeCategory: "discounted",
     loggedIn: true,
+    currentPath: req.path
   });
 });
 
@@ -102,6 +107,7 @@ router.get("/cart", isloggedin, async (req, res) => {
     loggedIn: true,
     success: req.session.success,
     error: req.session.error,
+    currentPath: req.path
   });
 
   req.session.success = null;
@@ -163,6 +169,7 @@ router.get("/account", isloggedin, async (req, res) => {
     loggedIn: true,
     success: req.session.success, 
     error: req.session.error,
+    currentPath: req.path
   });
   req.session.success = null;
   req.session.error = null;

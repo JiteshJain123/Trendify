@@ -22,7 +22,6 @@ const registerUser = async (req, res) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}:"<>?[\]\\;',./`~]).{8,}$/;
     if (!passwordRegex.test(password)) {
       return res.redirect("/user-home?passwordError=Password must contain at least 8 characters, 1 uppercase letter, and 1 special character");
-
     }
 
     const existingUser = await userModel.findOne({ email });
@@ -37,13 +36,19 @@ const registerUser = async (req, res) => {
     const createdUser = new userModel({ fullname, email, password: hash });
     await createdUser.save();
 
+    // ✅ Automatically log the user in
+    const token = generateToken(createdUser);
+    res.cookie("token", token, { httpOnly: true });
+
     req.session.success = "User created successfully!";
-    return res.redirect("/user-home");
+    return res.redirect("/shop");
   } catch (err) {
+    console.error(err);
     req.session.error = "Something went wrong. Please try again.";
     return res.redirect("/user-home");
   }
 };
+
 
 const loginUser = async (req, res) => {
   try {
@@ -51,19 +56,19 @@ const loginUser = async (req, res) => {
 
     if (!email || !password) {
       req.session.error = "All fields are required";
-      return res.redirect("/");
+      return res.redirect("/user-home");
     }
 
     const existingUser = await userModel.findOne({ email });
     if (!existingUser) {
       req.session.error = "User does not exist, please register";
-      return res.redirect("/");
+      return res.redirect("/user-home");
     }
 
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) {
       req.session.error = "Invalid credentials";
-      return res.redirect("/");
+      return res.redirect("/user-home");
     }
 
     const token = generateToken(existingUser);
@@ -73,7 +78,7 @@ const loginUser = async (req, res) => {
     return res.redirect("/shop");
   } catch (err) {
     req.session.error = "Login failed. Please try again.";
-    return res.redirect("/");
+    return res.redirect("//user-home");
   }
 };
 
